@@ -1,9 +1,10 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, PackMasterWeb
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -25,38 +26,38 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 // ------------------------------------------------------------------------- //
 
-require_once '../../../include/cp_header.php';
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/include/PackMasterWeb_includes.php");
+use XoopsModules\Packmasterweb\{Helper,
+    Utility
+};
 
-if ( file_exists("../language/".$xoopsConfig['language']."/modinfo.php") ) {
-    include_once "../language/".$xoopsConfig['language']."/modinfo.php";
-} else {
-	include_once "../language/english/modinfo.php";
-}
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/admin/menu.php");
+/** @var Helper $helper */
+/** @var Utility $utility */
+
+require_once __DIR__ . '/admin_header.php';
+
+// require_once XOOPS_ROOT_PATH . '/modules/packmasterweb/admin/menu.php';
 
 // Get HTTP post/get parameters.
-import_request_variables("gp", "param_");
+Utility::import_request_variables('gp', 'param_');
 
 xoops_cp_header();
 $p_title = _AM_PMW_CONFIGURE;
-print "<h4 style='text-align:left;'>$p_title</h4>";
-PackMasterWeb_admin_hmenu();
+print "<h4 style='text-align:left;'>${p_title}</h4>";
+// Utility::horizontalMenuAdmin();
 
-
-error_log("edit->init \n", 3, "/tmp/pmw.log");
+error_log("edit->init \n", 3, '/tmp/pmw.log');
 
 $editmenu[0]['title'] = _MI_PMW_UPLOAD_UPLOAD_SD;
-$editmenu[0]['link']  = "uploadscouts.php";
+$editmenu[0]['link']  = 'uploadscouts.php';
 
 $editmenu[1]['title'] = _MI_PMW_UPLOAD_UPLOAD_AD;
-$editmenu[1]['link']  = "uploadadvancement.php";
+$editmenu[1]['link']  = 'uploadadvancement.php';
 
 $editmenu[2]['title'] = _MI_PMW_UPLOAD_UPLOAD_ANS;
-$editmenu[2]['link']  = "uploadAcademicSport.php";
+$editmenu[2]['link']  = 'uploadAcademicSport.php';
 
 $editmenu[3]['title'] = _MI_PMW_UPLOAD_UPLOAD_ELECTIVES;
-$editmenu[3]['link']  = "uploadElectives.php";
+$editmenu[3]['link']  = 'uploadElectives.php';
 
 //$editmenu[2]['title'] = _MI_PMW_EDIT_DOWNLOAD_SD;
 //$editmenu[2]['link']  = "admin/downloadscouts.php";
@@ -65,24 +66,28 @@ $editmenu[3]['link']  = "uploadElectives.php";
 //$editmenu[3]['link']  = "admin/downloadadvancement.php";
 
 print "<ol>\n";
-foreach( $editmenu as $menu_item ) {
-	?>
-	<li><form action="<?PHP print $menu_item['link'] ?>" 
-				 method="post" 
-				 enctype="multipart/form-data">
-		<table>
-			<tr><th colspan='2'><?PHP print $menu_item['title']; ?></th></tr>
-			<tr>
-				<td>File:</td>
-				<td><input type="file" name="file" size="30"></td>
-			</tr>
-			<tr>
-				<td colspan='2'><input type='submit' value='Upload!'></td>
-			</tr>
-		 </table>
-		 </form></li>
-<?PHP
-}	//	End foreach 
+foreach ($editmenu as $menu_item) {
+    ?>
+    <li>
+        <form action="<?php print $menu_item['link'] ?>"
+              method="post"
+              enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <th colspan='2'><?php print $menu_item['title']; ?></th>
+                </tr>
+                <tr>
+                    <td>File:</td>
+                    <td><input type="file" name="file" size="30"></td>
+                </tr>
+                <tr>
+                    <td colspan='2'><input type='submit' value='Upload!'></td>
+                </tr>
+            </table>
+        </form>
+    </li>
+    <?php
+}    //	End foreach
 print "</ol>\n";
 
 xoops_cp_footer();

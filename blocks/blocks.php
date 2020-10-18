@@ -1,9 +1,10 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, PackMasterWeb
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
 //  the Free Software Foundation; either version 2 of the License, or        //
@@ -24,31 +25,35 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
 
-// Include any constants used for internationalizing templates.
-if ( file_exists(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/".$xoopsConfig['language']."/templates.php") ) 
-    require_once XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/".$xoopsConfig['language']."/templates.php";
-else 
-	include_once XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/english/templates.php";
-// Include any common code for this module.
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/include/PackMasterWeb_includes.php");
+use XoopsModules\Packmasterweb\{Helper,
+    Utility
+};
 
-function b_PackMasterWeb_do_block()
-{
-	$sites = array
-	(
-		"xoops.org" => "http://www.xoops.org",
-		"worldware.com" => "http://www.worldware.com",
-		"xooperstore.com" => "http://www.xooperstore.com",
-	);
-	$block = array();
-	$link = array();
-	foreach ($sites as $site => $url)
-	{
-		$link['site'] = $site;
-		$link['url'] = $url;
-		$block['links'][] = $link;
-	}
-	$block['lang'] = PackMasterWeb_get_intl();
-	return $block;
+/** @var Helper $helper */
+
+if (!class_exists(Helper::class)) {
+    return false;
 }
-?>
+
+$helper = Helper::getInstance();
+$helper::getInstance()->loadLanguage('templates');
+
+// Include any common code for this module.
+
+function b_packmasterweb_do_block()
+{
+    $sites = [
+        'xoops.org'       => 'https://www.xoops.org',
+        'worldware.com'   => 'http://www.worldware.com',
+        'xooperstore.com' => 'http://www.xooperstore.com',
+    ];
+    $block = [];
+    $link  = [];
+    foreach ($sites as $site => $url) {
+        $link['site']     = $site;
+        $link['url']      = $url;
+        $block['links'][] = $link;
+    }
+    $block['lang'] = Utility::getIntl();
+    return $block;
+}

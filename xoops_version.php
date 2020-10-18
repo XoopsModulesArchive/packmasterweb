@@ -1,9 +1,10 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, Rick Broker
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,76 +25,144 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-$modversion['name'] = _MI_PMW_NAME;
-$modversion['version'] = 0.20;
-$modversion['description'] = _MI_PMW_DESC;
-$modversion['credits'] = "Rick Broker http://packmasterweb.sf.net/";
-$modversion['author'] = "Rick Broker";
-$modversion['help'] = "docs/PackMasterWeb_admin.html";
-$modversion['license'] = "GPL";
-$modversion['official'] = 0;
-$modversion['image'] = "images/PackMasterWeb.png";
-$modversion['dirname'] = "PackMasterWeb";
 
-// SQL file 
-// This is preprocessed by xoops. The format must be constistant with
+$moduleDirName      = basename(__DIR__);
+$moduleDirNameUpper = mb_strtoupper($moduleDirName);
+
+$modversion['version']             = '1.01';
+$modversion['module_status']       = 'Beta 1';
+$modversion['release_date']        = '2020/10/17';
+$modversion['name']                = _MI_PMW_NAME;
+$modversion['description']         = _MI_PMW_DESC;
+$modversion['credits']             = 'Rick Broker http://packmasterweb.sf.net/';
+$modversion['author']              = 'Rick Broker';
+$modversion['help']                = 'docs/PackMasterWeb_admin.html';
+$modversion['license']             = 'GNU GPL 2.0 or later';
+$modversion['official']            = 0;
+$modversion['dirname']             = $moduleDirName;
+$modversion['modicons16']          = 'assets/images/icons/16';
+$modversion['modicons32']          = 'assets/images/icons/32';
+$modversion['image']               = 'assets/images/logoModule.png';
+$modversion['module_website_url']  = 'https://xoops.org';
+$modversion['module_website_name'] = 'XOOPS';
+$modversion['min_php']             = '7.1';
+$modversion['min_xoops']           = '2.5.10';
+$modversion['min_admin']           = '1.2';
+$modversion['min_db']              = [
+    'mysql' => '5.5',
+];
+
+// SQL file
+// This is preprocessed by xoops. The format must be consistent with
 // output produced by PHPMYADMIN
 // All tables should not have any prefix!
-$modversion['sqlfile']['mysql'] = "sql/mysql.sql";
+$modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
 
 // Tables created by sql (without prefix!)
-$modversion['tables'][] = "PackMasterWeb_Scout_Data";
-$modversion['tables'][] = "PackMasterWeb_Rank_Dates";
-$modversion['tables'][] = "PackMasterWeb_AcademicSports";
-$modversion['tables'][] = "PackMasterWeb_Electives";
-$modversion['tables'][] = "PackMasterWeb_TigerElectives";
-$modversion['tables'][] = "PackMasterWeb_WolfElectives";
-$modversion['tables'][] = "PackMasterWeb_BearElectives";
-$modversion['tables'][] = "PackMasterWeb_WebelosElectives";
-$modversion['tables'][] = "PackMasterWeb_config";
+$modversion['tables'][] = 'PackMasterWeb_Scout_Data';
+$modversion['tables'][] = 'PackMasterWeb_Rank_Dates';
+$modversion['tables'][] = 'PackMasterWeb_AcademicSports';
+$modversion['tables'][] = 'PackMasterWeb_Electives';
+$modversion['tables'][] = 'PackMasterWeb_TigerElectives';
+$modversion['tables'][] = 'PackMasterWeb_WolfElectives';
+$modversion['tables'][] = 'PackMasterWeb_BearElectives';
+$modversion['tables'][] = 'PackMasterWeb_WebelosElectives';
+$modversion['tables'][] = 'PackMasterWeb_config';
 
 // Admin things
-$modversion['hasAdmin'] = 1;
-$modversion['adminindex'] = "admin/index.php";
-$modversion['adminmenu'] = "admin/menu.php";
+$modversion['hasAdmin']    = 1;
+$modversion['system_menu'] = 1;
+$modversion['adminindex']  = 'admin/index.php';
+$modversion['adminmenu']   = 'admin/menu.php';
 
 // Main contents
 $modversion['hasMain'] = 1;
 
+// ------------------- Help files ------------------- //
+$modversion['help']        = 'page=help';
+$modversion['helpsection'] = [
+    [
+        'name' => _MI_PMW_OVERVIEW,
+        'link' => 'page=help',
+    ],
+    [
+        'name' => _MI_PMW_ADMIN,
+        'link' => 'page=admin',
+    ],
+    [
+        'name' => _MI_PMW_DISCLAIMER,
+        'link' => 'page=disclaimer',
+    ],
+    [
+        'name' => _MI_PMW_LICENSE,
+        'link' => 'page=license',
+    ],
+    [
+        'name' => _MI_PMW_SUPPORT,
+        'link' => 'page=support',
+    ],
+];
+
 // Templates
-$modversion['templates'][0]['file'] = 'PackMasterWeb_index.html';
-$modversion['templates'][0]['description'] = 'PackMasterWeb Template Page';
-$modversion['templates'][1]['file'] = 'PackMasterWeb_ScoutData.html';
-$modversion['templates'][1]['description'] = 'PackMasterWeb Scout Data Page';
-$modversion['templates'][2]['file'] = 'PackMasterWeb_Tiger.html';
-$modversion['templates'][2]['description'] = 'PackMasterWeb Tiger Advancement Page';
-$modversion['templates'][3]['file'] = 'PackMasterWeb_Bobcat.html';
-$modversion['templates'][3]['description'] = 'PackMasterWeb Bobcat Advancement Page';
-$modversion['templates'][4]['file'] = 'PackMasterWeb_Wolf.html';
-$modversion['templates'][4]['description'] = 'PackMasterWeb Wolf Advancement Page';
-$modversion['templates'][5]['file'] = 'PackMasterWeb_Bear.html';
-$modversion['templates'][5]['description'] = 'PackMasterWeb Bear Advancement Page';
-$modversion['templates'][6]['file'] = 'PackMasterWeb_Webelos.html';
-$modversion['templates'][6]['description'] = 'PackMasterWeb Webelos Advancement Page';
-$modversion['templates'][7]['file'] = 'PackMasterWeb_ArrowOfLight.html';
-$modversion['templates'][7]['description'] = 'PackMasterWeb Arrow Of Light Advancement Page';
-$modversion['templates'][8]['file'] = 'PackMasterWeb_AcademicSport.html';
-$modversion['templates'][8]['description'] = 'PackMasterWeb Academic and Sport Page';
+$modversion['templates'] = [
+    [
+        'file'        => 'PackMasterWeb_index.tpl',
+        'description' => 'PackMasterWeb Template Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_ScoutData.tpl',
+        'description' => 'PackMasterWeb Scout Data Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_Tiger.tpl',
+        'description' => 'PackMasterWeb Tiger Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_Bobcat.tpl',
+        'description' => 'PackMasterWeb Bobcat Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_Wolf.tpl',
+        'description' => 'PackMasterWeb Wolf Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_Bear.tpl',
+        'description' => 'PackMasterWeb Bear Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_Webelos.tpl',
+        'description' => 'PackMasterWeb Webelos Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_ArrowOfLight.tpl',
+        'description' => 'PackMasterWeb Arrow Of Light Advancement Page',
+    ],
+    [
+        'file'        => 'PackMasterWeb_AcademicSport.tpl',
+        'description' => 'PackMasterWeb Academic and Sport Page',
+    ],
+];
 
 // Blocks (Start indexes with 1, not 0!)
 // This is a simple block that just displays a fixed list.
-$modversion['blocks'][1]['file'] = "blocks.php";
-$modversion['blocks'][1]['name'] = _MI_PMW_BLOCK_ONE_TITLE;
-$modversion['blocks'][1]['description'] = _MI_PMW_BLOCK_ONE_DESC;
-$modversion['blocks'][1]['show_func'] = "b_PackMasterWeb_do_block";
-$modversion['blocks'][1]['template'] = 'PackMasterWeb_block_one.html';
-$modversion['blocks'][1]['options']	= 1 | "two";
 
-// This block displays a selection from the database, controlled by the configuration, which is set in 
+$modversion['blocks'][] = [
+    'file'        => 'blocks.php',
+    'name'        => _MI_PMW_BLOCK_ONE_TITLE,
+    'description' => _MI_PMW_BLOCK_ONE_DESC,
+    'show_func'   => 'b_packmasterweb_do_block',
+    'template'    => 'packmasterweb_block_1.tpl',
+    'options'     => 1 | 2,
+];
+
+// This block displays a selection from the database, controlled by the configuration, which is set in
 // module admin administration for PackMasterWeb
-$modversion['blocks'][2]['file'] = "blocks_db.php";
-$modversion['blocks'][2]['name'] = _MI_PMW_BLOCK_TWO_TITLE;
-$modversion['blocks'][2]['description'] = _MI_PMW_BLOCK_TWO_DESC;
-$modversion['blocks'][2]['show_func'] = "b_PackMasterWeb_do_db_block";
-$modversion['blocks'][2]['template'] = 'PackMasterWeb_block_two.html';
-$modversion['blocks'][2]['options']	= 1 | "two";
+
+$modversion['blocks'][] = [
+    'file'        => 'blocks_db.php',
+    'name'        => _MI_PMW_BLOCK_TWO_TITLE,
+    'description' => _MI_PMW_BLOCK_TWO_DESC,
+    'show_func'   => 'b_packmasterweb_do_db_block',
+    'template'    => 'packmasterweb_block_2.tpl',
+    'options'     => 1 | 2,
+];

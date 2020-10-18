@@ -1,9 +1,10 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, PackMasterWeb
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
 //  the Free Software Foundation; either version 2 of the License, or        //
@@ -24,51 +25,60 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
 
-// Include any constants used for internationalizing templates.
-if ( file_exists(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/".$xoopsConfig['language']."/templates.php") ) 
-    require_once XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/".$xoopsConfig['language']."/templates.php";
-else 
-	include_once XOOPS_ROOT_PATH ."/modules/PackMasterWeb/language/english/templates.php";
+use XoopsModules\Packmasterweb\{Helper,
+    Utility
+};
+
+/** @return array|false
+ * @return array|false
+ * @var Helper $helper
+ */
+
 // Include any common code for this module.
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/include/PackMasterWeb_includes.php");
 
-function b_PackMasterWeb_do_db_block()
+function b_packmasterweb_do_db_block()
 {
-	global $xoopsDB;
+    global $xoopsDB;
 
-	// You can get values from xoops_version.php
-	// For example, if xoops_version.php has this line (and this is block 1)
-	//	$modversion['blocks'][1]['options']	= 1 | "two";
-	// Then uncomment the next line
-	// $option_value = ($options) ? $options[0] : 128;
-	// To retrieve the value 1, (or a default of 128, if not set.)
+    if (!class_exists(Helper::class)) {
+        return false;
+    }
 
-	print "<h1>blocks_db</h1>";
-	$block = array();
-	$whereClause = PackMasterWeb_get_config_item('config_block_where');
-	$limit = PackMasterWeb_get_config_item('config_block_count');
-	$queryString = "SELECT table_one_char, table_one_text FROM " . $xoopsDB->prefix('PackMasterWeb_table_one') . " $whereClause";
+    $helper = Helper::getInstance();
+    $helper::getInstance()->loadLanguage('templates');
 
-	$error = null;
-	$result = $xoopsDB->query($queryString);
-	if (!$result)
-	{
-		$msg = $xoopsDB->error();
-		if (!$msg)
-			$msg = "An error occurred";
-		$error = array('msg' => $msg, 'data' => $queryString);
-	}
+    // You can get values from xoops_version.php
+    // For example, if xoops_version.php has this line (and this is block 1)
+    //	$modversion['blocks'][1]['options']	= 1 | "two";
+    // Then uncomment the next line
+    // $option_value = ($options) ? $options[0] : 128;
+    // To retrieve the value 1, (or a default of 128, if not set.)
 
-	while (!$error and ($link = $xoopsDB->fetchArray($result)))
-	{
-		$block[] = $link;
-	}
-	$all = array
-	(
-		"data" => $block,
-		"lang" => PackMasterWeb_get_intl(),
-		"error" => $error,
-	);
-	return $all;
+    print '<h1>blocks_db</h1>';
+    $block       = [];
+    $whereClause = Utility::getConfigItem('config_block_where');
+    $limit       = Utility::getConfigItem('config_block_count');
+    $queryString = 'SELECT table_one_char, table_one_text FROM ' . $xoopsDB->prefix('PackMasterWeb_table_one') . " ${whereClause}";
+
+    $error  = null;
+    $result = $xoopsDB->query($queryString);
+    if (!$result) {
+        $msg = $xoopsDB->error();
+        if (!$msg) {
+            $msg = 'An error occurred';
+        }
+        $error = [
+            'msg'  => $msg,
+            'data' => $queryString,
+        ];
+    }
+
+    while (!$error and ($link = $xoopsDB->fetchArray($result))) {
+        $block[] = $link;
+    }
+    return [
+        'data'  => $block,
+        'lang'  => Utility::getIntl(),
+        'error' => $error,
+    ];
 }
-?>
