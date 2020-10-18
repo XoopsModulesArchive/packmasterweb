@@ -1,9 +1,12 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+namespace XoopsModules\Packmasterweb;
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, Rick Broker
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,29 +27,47 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-class logger {
-	//================================================================
-	function logger() {
-		$this->_option = 3;
-		$this->_file = "/tmp/pmw.log";
-		$this->_head = "logger";
-		$this->log("start logger");
-	}	//	End Logger Constructor
-	//================================================================
-	function setLogOption( $option ) {
-		$this->_option = $option;
-	}	//	End setLogOption
-	//================================================================
-	function setFile( $file ) {
-		$this->_file = $file;
-	}	//	End setFile
-	//================================================================
-	function setHeader( $head ) {
-		$this->_head = $head;
-	}	//	End setHeader
-	//================================================================
-	function log( $msg ) {
-		//RRB error_log($this->_head . " - " . $msg . "\n", $this->_option, $this->_file);
-	}	//	End log
-}	//	logger Class
-?>
+class Logger
+{
+    //================================================================
+    public function __construct()
+    {
+        $this->_option = 3;
+        $this->_file   = '/tmp/pmw.log';
+        $this->_head   = 'logger';
+        $this->log('start logger');
+    }
+
+    //	End Logger Constructor
+
+    //================================================================
+    public function setLogOption($option): void
+    {
+        $this->_option = $option;
+    }
+
+    //	End setLogOption
+
+    //================================================================
+    public function setFile($file): void
+    {
+        $this->_file = $file;
+    }
+
+    //	End setFile
+
+    //================================================================
+    public function setHeader($head): void
+    {
+        $this->_head = $head;
+    }
+
+    //	End setHeader
+
+    //================================================================
+    public function log($msg): void
+    {
+        //RRB error_log($this->_head . " - " . $msg . "\n", $this->_option, $this->_file);
+    }
+    //	End log
+}    //	logger Class

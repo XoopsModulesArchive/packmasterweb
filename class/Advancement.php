@@ -1,9 +1,12 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+namespace XoopsModules\Packmasterweb;
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, Rick Broker
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,73 +27,76 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 //  ------------------------------------------------------------------------ //
-require_once( XOOPS_ROOT_PATH ."/modules/PackMasterWeb/class/ScoutData.php");
-require_once( XOOPS_ROOT_PATH ."/modules/PackMasterWeb/class/logger.php");
 
-class Advancement {
-	
-	//================================================================
-	function Advancement() {
-		$this->_logger = new logger();
-		$this->_logger->setLogOption(3);
-		$this->_logger->setHeader("Addvancement");
-		$this->_logger->log("new Advancement");
-	}	//	End Advancement Constructor
-	
-	//================================================================
-	function getAdvancementByName( $FirstName, $LastName ) {
-	}	//	End getAdvancementByName
-	
-	//================================================================
-	function getAdvancementById( $id ) {
-		global $xoopsDB;
-		$this->_logger->setHeader("Advancement->getAdvancementById");
-		$SQL = "SELECT * FROM " .
-				$xoopsDB->prefix("PackMasterWeb_Rank_Dates") . 
-			   " " .
-			   "WHERE scout_id=" . $id;
-		$this->_logger->log($SQL);
- 		$result = $xoopsDB->query($SQL);
- 		$result = $xoopsDB->fetchArray($result);
- 		return $result;
-	}	//	End getAdvancemtneById
-	//================================================================
-	function saveAdvancement( $FirstName, $LastName, $record ) {
-		global $xoopsDB;
-		$this->_logger->setHeader("Advancement->saveAdvancement");
-		$this->sd = new ScoutData();
-		$this->id = $this->sd->getScoutId( $FirstName, $LastName );
-		$SQL = "DELETE FROM " .
-				$xoopsDB->prefix("PackMasterWeb_Rank_Dates") .
-				" WHERE scout_id=" . $this->id;
-		
-		$xoopsDB->query($SQL);
-		
-		$SQL = "INSERT INTO " .
-			$xoopsDB->prefix("PackMasterWeb_Rank_Dates") ;
-		$pass = 0;
-		$FieldList = "Scout_id, ";
-		$ValueList = $this->id . ",";
-		while ( list($key, $value) = each($record) ) {
-			$this->_logger->log("insert " . $key . "=" . $value );
-			if( $pass > 0 ) {
-				$FieldList = $FieldList . ",";
-				$ValueList = $ValueList . ",";
-			}	//	End if
-			$FieldList = $FieldList . $key;
-			if( strlen($value) > 4) {
-				//$value="STR_TO_DATE('" . $value . "', '%m/%d/%y') ";
-				list( $month, $day, $year ) = split( '[/.-]', $value );
-				$value = "'" . $year . "-" . $month . "-" . $day . "'";
-			} else {
-				$value = "null";
-			}
-			$ValueList = $ValueList . $value; 
-			$pass = $pass + 1;
-		}	//	End while
-		$SQL = $SQL . " (" . $FieldList . ") VALUES (" . $ValueList . ")";
-		$this->_logger->log($SQL);
-		$xoopsDB->query($SQL);
-	}	//	End saveAdvancement	
-}	//	End Advancement Class
-?>
+class Advancement
+{
+    //================================================================
+    public function __construct()
+    {
+        $this->_logger = new Logger();
+        $this->_logger->setLogOption(3);
+        $this->_logger->setHeader('Addvancement');
+        $this->_logger->log('new Advancement');
+    }
+
+    //	End Advancement Constructor
+
+    //================================================================
+    public function getAdvancementByName($FirstName, $LastName): void
+    {
+    }
+
+    //	End getAdvancementByName
+
+    //================================================================
+    public function getAdvancementById($id)
+    {
+        global $xoopsDB;
+        $this->_logger->setHeader('Advancement->getAdvancementById');
+        $SQL = 'SELECT * FROM ' . $xoopsDB->prefix('PackMasterWeb_Rank_Dates') . ' ' . 'WHERE scout_id=' . $id;
+        $this->_logger->log($SQL);
+        $result = $xoopsDB->query($SQL);
+        $result = $xoopsDB->fetchArray($result);
+        return $result;
+    }
+
+    //	End getAdvancemtneById
+
+    //================================================================
+    public function saveAdvancement($FirstName, $LastName, $record): void
+    {
+        global $xoopsDB;
+        $this->_logger->setHeader('Advancement->saveAdvancement');
+        $this->sd = new ScoutData();
+        $this->id = $this->sd->getScoutId($FirstName, $LastName);
+        $SQL      = 'DELETE FROM ' . $xoopsDB->prefix('PackMasterWeb_Rank_Dates') . ' WHERE scout_id=' . $this->id;
+
+        $xoopsDB->query($SQL);
+
+        $SQL       = 'INSERT INTO ' . $xoopsDB->prefix('PackMasterWeb_Rank_Dates');
+        $pass      = 0;
+        $FieldList = 'Scout_id, ';
+        $ValueList = $this->id . ',';
+        foreach ($record as $key => $value) {
+            $this->_logger->log('insert ' . $key . '=' . $value);
+            if ($pass > 0) {
+                $FieldList .= ',';
+                $ValueList .= ',';
+            }    //	End if
+            $FieldList .= $key;
+            if (strlen($value) > 4) {
+                //$value="STR_TO_DATE('" . $value . "', '%m/%d/%y') ";
+                [$month, $day, $year] = preg_split('/[/.-]/', $value);
+                $value = "'" . $year . '-' . $month . '-' . $day . "'";
+            } else {
+                $value = 'null';
+            }
+            $ValueList .= $value;
+            ++$pass;
+        }    //	End foreach
+        $SQL .= ' (' . $FieldList . ') VALUES (' . $ValueList . ')';
+        $this->_logger->log($SQL);
+        $xoopsDB->query($SQL);
+    }
+    //	End saveAdvancement
+}    //	End Advancement Class

@@ -1,9 +1,12 @@
-<?php
-// ------------------------------------------------------------------------- 
+<?php declare(strict_types=1);
+
+namespace XoopsModules\Packmasterweb;
+
+// -------------------------------------------------------------------------
 //	PackMasterWeb
 //		Copyright 2004, PackMasterWeb
 // 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------
 // ------------------------------------------------------------------------- //
 //  This program is free software; you can redistribute it and/or modify     //
 //  it under the terms of the GNU General Public License as published by     //
@@ -24,59 +27,64 @@
 //  along with this program; if not, write to the Free Software              //
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
 // ------------------------------------------------------------------------- //
-require_once( XOOPS_ROOT_PATH ."/modules/PackMasterWeb/class/ScoutData.php");
-require_once( XOOPS_ROOT_PATH ."/modules/PackMasterWeb/class/Electives.php");
-require_once( XOOPS_ROOT_PATH ."/modules/PackMasterWeb/class/logger.php");
 
-if ( file_exists( XOOPS_ROOT_PATH . "/modules/PackMasterWeb/language/".$xoopsConfig['language']."/BadgeInfo.php") ) {
-    include_once  XOOPS_ROOT_PATH . "/modules/PackMasterWeb/language/".$xoopsConfig['language']."/BadgeInfo.php";
-} else {
-	include_once  XOOPS_ROOT_PATH . "/modules/PackMasterWeb/language/english/BadgeInfo.php";
-}
+Helper::getInstance()->loadLanguage('BadgeInfo');
 
-class WolfElectives {
-	
-	//================================================================
-	function WolfElectives() {
-		$this->_logger = new logger();
-		$this->_logger->setLogOption(3);
-		$this->_logger->setHeader("WolfElectives");
-		$this->_logger->log("new WolfElectives");
-		$this->WolfPoints = new Electives();
-	}	//	End Electives Constructor
-	
-	//================================================================
-	function getElectiveNames() {
-		global $wolf_electives;
-		
-		return $wolf_electives;
-	}	//	getElectiveNames
-	
-	//================================================================
-	function getCompletedElectives( $id ) {
-		global $xoopsDB;
-		$this->_logger->setHeader("WolfElectives->getCompletedElectivesById");
-		$SQL = "SELECT * FROM " .
-				$xoopsDB->prefix("PackMasterWeb_WolfElectives") . 
-			   " " .
-			   "WHERE scout_id=" . $id;
-		$this->_logger->log($SQL);
- 		$result = $xoopsDB->query($SQL);
- 		$result = $xoopsDB->fetchArray($result);
- 		foreach( $result as $key=>$item ) {
- 			$arrowPoints[$key] = $item;
- 		}	//	End foreach
-		$this->_logger->setHeader("WolfElectives");
- 		return $arrowPoints;
-	}	//	End getCompletedElectives
-	
-	//================================================================
-	function getEarnedDates( $id ) {
-		$this->_logger->setHeader("WolfElectives->getCompletedElectivesById");
-		return $this->WolfPoints->getElectivesById( $id );
-	}	//	End getEarnedDates
-}	//	WolfElectives
+class WolfElectives
+{
+    //================================================================
+    public function __construct()
+    {
+        $this->_logger = new Logger();
+        $this->_logger->setLogOption(3);
+        $this->_logger->setHeader('WolfElectives');
+        $this->_logger->log('new WolfElectives');
+        $this->WolfPoints = new Electives();
+    }
+
+    //	End Electives Constructor
+
+    //================================================================
+    public function getElectiveNames()
+    {
+        global $wolf_electives;
+
+        return $wolf_electives;
+    }
+
+    //	getElectiveNames
+
+    //================================================================
+    public function getCompletedElectives($id)
+    {
+        global $xoopsDB;
+        $arrowPoints = [];
+        $this->_logger->setHeader('WolfElectives->getCompletedElectivesById');
+        $SQL = 'SELECT * FROM ' . $xoopsDB->prefix('PackMasterWeb_WolfElectives') . ' ' . 'WHERE scout_id=' . $id;
+        $this->_logger->log($SQL);
+        $result = $xoopsDB->query($SQL);
+        $result = $xoopsDB->fetchArray($result);
+        if ($result && !empty($result)) {
+            foreach ($result as $key => $item) {
+                $arrowPoints[$key] = $item;
+            }    //	End foreach
+        }
+        $this->_logger->setHeader('WolfElectives');
+        return $arrowPoints;
+    }
+
+    //	End getCompletedElectives
+
+    //================================================================
+    public function getEarnedDates($id)
+    {
+        $this->_logger->setHeader('WolfElectives->getCompletedElectivesById');
+        return $this->WolfPoints->getElectivesById($id);
+    }
+    //	End getEarnedDates
+}    //	WolfElectives
 ?>
+
 <?php
 /*
  * Created on Apr 24, 2005
@@ -84,4 +92,5 @@ class WolfElectives {
  * To change the template for this generated file go to
  * Window - Preferences - PHPeclipse - PHP - Code Templates
  */
+
 ?>

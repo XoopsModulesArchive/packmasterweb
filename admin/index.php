@@ -1,106 +1,129 @@
-<?php
-// ------------------------------------------------------------------------- 
-//	PackMasterWeb
-//		Copyright 2004, PackMasterWeb
-// 		packmasterweb.sourceforge.net
-// ------------------------------------------------------------------------- 
-//  This program is free software; you can redistribute it and/or modify     //
-//  it under the terms of the GNU General Public License as published by     //
-//  the Free Software Foundation; either version 2 of the License, or        //
-//  (at your option) any later version.                                      //
-//                                                                           //
-//  You may not change or alter any portion of this comment or credits       //
-//  of supporting developers from this source code or any supporting         //
-//  source code which is considered copyrighted (c) material of the          //
-//  original comment or credit authors.                                      //
-//                                                                           //
-//  This program is distributed in the hope that it will be useful,          //
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of           //
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            //
-//  GNU General Public License for more details.                             //
-//                                                                           //
-//  You should have received a copy of the GNU General Public License        //
-//  along with this program; if not, write to the Free Software              //
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA //
-//  ------------------------------------------------------------------------ //
+<?php declare(strict_types=1);
 
-require_once '../../../include/cp_header.php';
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/include/PackMasterWeb_includes.php");
-if ( file_exists("../language/".$xoopsConfig['language']."/modinfo.php") ) {
-    include_once "../language/".$xoopsConfig['language']."/modinfo.php";
-} else {
-	include_once "../language/english/modinfo.php";
+/*
+ * You may not change or alter any portion of this comment or credits
+ * of supporting developers from this source code or any supporting source code
+ * which is considered copyrighted (c) material of the original comment or credit authors.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+/**
+ * @copyright    XOOPS Project https://xoops.org/
+ * @license      GNU GPL 2 or later (http://www.gnu.org/licenses/gpl-2.0.html)
+ * @package
+ * @author       XOOPS Development Team
+ */
+
+use Xmf\Module\Admin;
+use Xmf\Request;
+use Xmf\Yaml;
+use XoopsModules\Packmasterweb\{Common,
+    Helper,
+    Utility,
+};
+
+/** @var Admin $adminObject */
+/** @var Helper $helper */
+/** @var Utility $utility */
+
+require_once __DIR__ . '/admin_header.php';
+xoops_loadLanguage('admin');
+xoops_cp_header();
+$adminObject = \Xmf\Module\Admin::getInstance();
+
+//check or upload folders
+//$configurator = new Common\Configurator();
+//foreach (array_keys($configurator->uploadFolders) as $i) {
+//    $utility::createFolder($configurator->uploadFolders[$i]);
+//    $adminObject->addConfigBoxLine($configurator->uploadFolders[$i], 'folder');
+//}
+
+//-------------------------------------
+//count "total quotes"
+//$quotesCount = $quotesHandler->getCount();
+// InfoBox quotes
+//$adminObject->addInfoBox(_AM_PMW_STATISTICS);
+// InfoBox quotes
+//$adminObject->addInfoBoxLine(sprintf(_AM_PMW_THEREARE_QUOTES, $quotesCount));
+
+
+$adminObject->displayNavigation(basename(__FILE__));
+
+//check for latest release
+//$newRelease = $utility->checkVerModule($helper);
+//if (!empty($newRelease)) {
+//    $adminObject->addItemButton($newRelease[0], $newRelease[1], 'download', 'style="color : Red"');
+//}
+
+//------------- Test Data ----------------------------
+
+if ($helper->getConfig('displaySampleButton')) {
+    $yamlFile            = dirname(__DIR__) . '/config/admin.yml';
+    $config              = loadAdminConfig($yamlFile);
+    $displaySampleButton = $config['displaySampleButton'];
+
+    if (1 === $displaySampleButton) {
+        xoops_loadLanguage('admin/modulesadmin', 'system');
+        require_once dirname(__DIR__) . '/testdata/index.php';
+
+        $adminObject->addItemButton(constant('CO_' . $moduleDirNameUpper . '_' . 'ADD_SAMPLEDATA'), '__DIR__ . /../../testdata/index.php?op=load', 'add');
+        $adminObject->addItemButton(constant('CO_' . $moduleDirNameUpper . '_' . 'SAVE_SAMPLEDATA'), '__DIR__ . /../../testdata/index.php?op=save', 'add');
+        //    $adminObject->addItemButton(constant('CO_' . $moduleDirNameUpper . '_' . 'EXPORT_SCHEMA'), '__DIR__ . /../../testdata/index.php?op=exportschema', 'add');
+        $adminObject->addItemButton(constant('CO_' . $moduleDirNameUpper . '_' . 'HIDE_SAMPLEDATA_BUTTONS'), '?op=hide_buttons', 'delete');
+    } else {
+        $adminObject->addItemButton(constant('CO_' . $moduleDirNameUpper . '_' . 'SHOW_SAMPLEDATA_BUTTONS'), '?op=show_buttons', 'add');
+        $displaySampleButton = $config['displaySampleButton'];
+    }
+    $adminObject->displayButton('left', '');
 }
-require_once(XOOPS_ROOT_PATH ."/modules/PackMasterWeb/admin/menu.php");
 
-// Get all HTTP post or get parameters, prefixed by "param_"
-import_request_variables("gp", "param_");
+//------------- End Test Data ----------------------------
 
-//
-// Displays the page to select which admin page you want.
-//
-function PackMasterWeb_menu()
+$adminObject->displayIndex();
+
+/**
+ * @param $yamlFile
+ * @return array|bool
+ */
+function loadAdminConfig($yamlFile)
 {
-	global $adminmenu;
-	xoops_cp_header();
-    $p_title = _AM_PMW_TITLE_ADMIN;
-    print "<h4 style='text-align:left;'>$p_title</h4>";
-  	PackMasterWeb_admin_hmenu();
-    print "<dl><BR>\n";
-    foreach($adminmenu as $menu_item)
-	{
-	    print "<dt>\n";
-	    $link = $menu_item['link'];
-		$link = "../" . $link;
-		print "<a href='" . $link . "'";
-		if (isset($menu_item['target']))
-			print " target='" . $menu_item['target'] . "'";
-		print ">" . $menu_item['title'] . "</a>";
-	    print "<dd>\n";
-		print $menu_item['desc'] . "<P>&nbsp;</P>";
-	}
-    print "</dl>\n";
-    xoops_cp_footer();
-    exit();
+    return Yaml::readWrapped($yamlFile);
 }
 
-//
-// Displays the configuration page for this module
-//
-function PackMasterWeb_config()
+/**
+ * @param $yamlFile
+ */
+function hideButtons($yamlFile): void
 {
-	global $adminmenu;
-	xoops_cp_header();
-    $p_title = _AM_PMW_CONFIGURE;
-    print "<h4 style='text-align:left;'>$p_title</h4>";
-  	PackMasterWeb_admin_hmenu();
-    xoops_cp_footer();
-    exit();
+    $app['displaySampleButton'] = 0;
+    Yaml::save($app, $yamlFile);
+    redirect_header('index.php', 0, '');
 }
 
-if (!isset($param_op))
-	 $param_op = 'menu';
-
-switch ($param_op) 
+/**
+ * @param $yamlFile
+ */
+function showButtons($yamlFile): void
 {
-	case "menu":
-		PackMasterWeb_menu();
-		break;
-	case "config":
-		PackMasterWeb_config();
-		break;
-	case "config_post":
-		PackMasterWeb_config_post();
-		break;
-	case "edit":
-		PackMasterWeb_edit();
-		break;
-	case "upload":
-		PackMasterWeb_upload();
-		break;
-	default:
-	    xoops_cp_header();
-		print "<h1>Unknown method requested '$param_op' in admin/index.php</h1>";
-	    xoops_cp_footer();
+    $app['displaySampleButton'] = 1;
+    Yaml::save($app, $yamlFile);
+    redirect_header('index.php', 0, '');
 }
-?>
+
+$op = Request::getString('op', 0, 'GET');
+
+switch ($op) {
+    case 'hide_buttons':
+        hideButtons($yamlFile);
+        break;
+    case 'show_buttons':
+        showButtons($yamlFile);
+        break;
+}
+
+echo $utility::getServerStats();
+
+require __DIR__ . '/admin_footer.php';

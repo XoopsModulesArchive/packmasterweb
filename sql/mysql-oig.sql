@@ -7,54 +7,53 @@
 
 # Table table_one
 CREATE TABLE PackMasterWeb_table_one (
-	table_one_key int not null auto_increment,
-	table_one_char char(32),
-	table_one_text text,
+    table_one_key  INT NOT NULL AUTO_INCREMENT,
+    table_one_char CHAR(32),
+    table_one_text TEXT,
 
 
-
-
-
-	table_two_key int,
+    table_two_key  INT,
 # Foreign Keys	
 #	FOREIGN KEY (table_two_key) REFERENCES table_two(table_two_key),
 
 # keys
-	primary key (table_one_key)
-) TYPE=MyISAM;
+    PRIMARY KEY (table_one_key)
+)
+    ENGINE = MyISAM;
 
 
 # Table table_two
 CREATE TABLE PackMasterWeb_table_two (
-	table_two_key int not null auto_increment,
-	table_two_char char(32),
-	table_two_text text,
-
-
-
+    table_two_key  INT NOT NULL AUTO_INCREMENT,
+    table_two_char CHAR(32),
+    table_two_text TEXT,
 
 
 # keys
-	primary key (table_two_key)
-) TYPE=MyISAM;
+    PRIMARY KEY (table_two_key)
+)
+    ENGINE = MyISAM;
 
 
 # This table holds any configuration settings for the module
 CREATE TABLE PackMasterWeb_config (
-	config_id int not null,
-	# Number of rows displayed on the main screen
-	config_main_count int,
-	# Where clause controlling what is displayed on the main screen
-	config_main_where text,
-	# Number of rows displayed in the block
-	config_block_count int,
-	# Where clause controlling what is displayed in the database block.
-	config_block_where text,
-	
-	primary key (config_id)
-) TYPE=MyISAM;
+    config_id          INT NOT NULL,
+    # Number of rows displayed on the main screen
+    config_main_count  INT,
+    # Where clause controlling what is displayed on the main screen
+    config_main_where  TEXT,
+    # Number of rows displayed in the block
+    config_block_count INT,
+    # Where clause controlling what is displayed in the database block.
+    config_block_where TEXT,
+
+    PRIMARY KEY (config_id)
+)
+    ENGINE = MyISAM;
 
 # Set defaults, if necessary.
-INSERT INTO PackMasterWeb_config (config_id, config_main_count, config_main_where, config_block_count, config_block_where) values (1, 10, "", 5, "where table_one_key > 0");
+INSERT INTO PackMasterWeb_config (config_id, config_main_count, config_main_where, config_block_count, config_block_where)
+VALUES (1, 10, "", 5, "where table_one_key > 0");
 
-
+
+
